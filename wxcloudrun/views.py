@@ -4,8 +4,7 @@ from run import app
 from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter, update_counterbyid
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
-import openai
-import clueai
+from lib import clueai
 
 
 @app.route('/')
@@ -72,21 +71,12 @@ def hello():
     # 获取请求体参数
     data = request.get_json()
     
-    messages = [
-                    {"role": "system", "content": "你是一个问答机器人。"},
-                    {"role": "user", "content": data},
-                    {"role": "assistant", "content": ""},
-                ]
-    prediction = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",
-            messages=messages,
-            temperature=0.9,
-            max_tokens=500,
-            top_p=1,
-            frequency_penalty=0,
-            presence_penalty=0.6,
-            )
-    reply = prediction['choices'][0]['message']['content']
+    cl = clueai.Client('0c78ipY1FPR7vuB73L0f8101001111010', check_api_key=True)
+    prediction = cl.generate(
+        model_name='ChatYuan-large',
+        prompt = data["message"]
+        )
+    reply = prediction.generations[0].text
 
     # 返回相同的数据
     return make_succ_response(reply)
