@@ -85,7 +85,6 @@ def hello():
             top_p=1,
             frequency_penalty=0,
             presence_penalty=0.6,
-            stop=[self.user, self.user2]
             )
     reply = prediction['choices'][0]['message']['content']
 
