@@ -70,7 +70,7 @@ def get_count():
 def hello():
     # 获取请求体参数
     data = request.get_json()
-    # 测试小元模型
+    # 测试小元模型1
     cl = clueai.Client('0c78ipY1FPR7vuB73L0f8101001111010', check_api_key=True)
     prediction = cl.generate(
         model_name='ChatYuan-large',
