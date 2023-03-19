@@ -68,6 +68,11 @@ def get_count():
 @app.route('/api/hello', methods=['POST'])
 def hello():
     """
-    :return: 返回"hello world"
+    :return: 返回请求体中的数据
     """
-    return make_succ_response("hello world")
+    # 获取请求体参数
+    data = request.get_json()
+
+    # 返回相同的数据
+    return make_succ_response(data)
+
