@@ -29,6 +29,8 @@
 ├── requirements.txt            依赖包文件
 ├── config.py                   项目的总配置文件  里面包含数据库 web应用 日志等各种配置
 ├── run.py                      flask项目管理文件 与项目进行交互的命令行工具集的入口
+├── lib                         外部包目录
+    └── clueai                  clueai的包
 └── wxcloudrun                  app目录
     ├── __init__.py             python项目必带  模块化思想
     ├── dao.py                  数据库访问模块
