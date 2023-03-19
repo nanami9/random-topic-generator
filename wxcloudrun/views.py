@@ -64,3 +64,10 @@ def get_count():
     """
     counter = Counters.query.filter(Counters.id == 1).first()
     return make_succ_response(0) if counter is None else make_succ_response(counter.count)
+
+@app.route('/api/hello', methods=['POST'])
+def hello():
+    """
+    :return: 返回"hello world"
+    """
+    return make_succ_response("hello world")
