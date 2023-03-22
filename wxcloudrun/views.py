@@ -5,9 +5,8 @@ from wxcloudrun.dao import delete_counterbyid, query_counterbyid, insert_counter
 from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 import clueai
-import openai
-
-openai.api_key = "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"
+import request
+import json
 
 @app.route('/')
 def index():
@@ -88,24 +87,18 @@ def gpt():
     # 获取请求体参数
     data = request.get_json()
     msg = data["message"]
-    setup = ""
-    messages = [
-                    {"role": "system", "content": setup},
-                    {"role": "user", "content": msg},
-                    {"role": "assistant", "content": ""},
-                ]
-
-    # gpt-3.5-turbo
-    prediction = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        messages=messages,
-        temperature=0.9,
-        max_tokens=500,
-        top_p=1,
-        frequency_penalty=0,
-        presence_penalty=0.6,
-        )
-    reply = prediction['choices'][0]['message']['content']
+    setup = data["setup"]
+    url = 'http://13.114.207.202:5000/api/gpt'
+    headers = {'Content-Type': 'application/json'}
+    data = {'message': msg,
+            'setup': setup
+            }
+    response = requests.post(url, headers=headers, data=json.dumps(data))
     
+    if response.status_code == 200:
+        reply = response.text
+    else:
+        print('Error:', response.status_code)
+ 
     return make_succ_response(reply)
 
