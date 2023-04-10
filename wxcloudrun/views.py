@@ -7,6 +7,8 @@ from wxcloudrun.response import make_succ_empty_response, make_succ_response, ma
 import clueai
 import requests
 import json
+import asyncio
+import aiohttp
 
 @app.route('/')
 def index():
@@ -101,4 +103,29 @@ def gpt():
         print('Error:', response.status_code)
  
     return make_succ_response(reply)
+
+async def make_request(url, data, headers):
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, data=data, headers=headers) as response:
+            if response.status == 200:
+                return await response.text()
+            else:
+                return None
+
+@app.route('/api/gpt2', methods=['POST'])
+async def gpt():
+    data = request.get_json()
+    msg = data["message"]
+    setup = data["setup"]
+    url = 'http://13.114.207.202:5000/api/gpt'
+    headers = {'Content-Type': 'application/json'}
+    data = {'message': msg,
+            'setup': setup
+            }
+    reply = await make_request(url, json.dumps(data), headers)
+
+    if reply is None:
+        return make_err_response('Error')
+    else:
+        return make_succ_response(reply)
 
