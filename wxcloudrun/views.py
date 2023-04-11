@@ -87,7 +87,7 @@ def gpt():
     return make_succ_response(reply)
 
 @app.route('/api/bot', methods=['POST'])
-def gpt():
+def bot():
     # 获取请求体参数
     data = request.get_json()
     msg = data["message"]
