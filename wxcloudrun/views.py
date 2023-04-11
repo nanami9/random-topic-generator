@@ -66,21 +66,6 @@ def get_count():
     counter = Counters.query.filter(Counters.id == 1).first()
     return make_succ_response(0) if counter is None else make_succ_response(counter.count)
 
-@app.route('/api/hello', methods=['POST'])
-def hello():
-    # 获取请求体参数
-    data = request.get_json()
-    # 测试小元模型
-    cl = clueai.Client('0c78ipY1FPR7vuB73L0f8101001111010', check_api_key=True)
-    prediction = cl.generate(
-        model_name='ChatYuan-large',
-        prompt = data["message"]
-        )
-    reply = prediction.generations[0].text
-
-    # 返回结果
-    return make_succ_response(reply)
-
 @app.route('/api/gpt', methods=['POST'])
 def gpt():
     # 获取请求体参数
