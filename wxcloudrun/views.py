@@ -85,29 +85,3 @@ def gpt():
         print('Error:', response.status_code)
  
     return make_succ_response(reply)
-
-@app.route('/api/bot', methods=['POST'])
-def bot():
-    # 获取请求体参数
-    data = request.get_json()
-    msg = data["message"]
-    setup = data["setup"]
-    ai = data["assistant"]
-    user = data["user"]
-    user2 = data["user2"]
-    url = 'http://13.114.207.202:5000/api/bot'
-    headers = {'Content-Type': 'application/json'}
-    data = {'message': msg,
-            'setup': setup,
-            'ai': ai,
-            'user': user,
-            'user2': user2
-            }
-    response = requests.post(url, headers=headers, data=json.dumps(data))
-    
-    if response.status_code == 200:
-        reply = response.text
-    else:
-        print('Error:', response.status_code)
- 
-    return make_succ_response(reply)
