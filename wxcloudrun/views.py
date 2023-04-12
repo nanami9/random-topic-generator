@@ -6,6 +6,8 @@ from wxcloudrun.model import Counters
 from wxcloudrun.response import make_succ_empty_response, make_succ_response, make_err_response
 import requests
 import json
+import aiohttp
+import asyncio
 
 @app.route('/')
 def index():
@@ -84,4 +86,30 @@ def gpt():
     else:
         print('Error:', response.status_code)
  
+    return make_succ_response(reply)
+
+async def send_async_http_request(url, headers, data):
+    async with aiohttp.ClientSession() as session:
+        async with session.post(url, headers=headers, data=data) as response:
+            if response.status == 200:
+                return await response.text()
+            else:
+                print('Error:', response.status)
+                return None
+           
+@app.route('/api/gpt2', methods=['POST'])
+def gpt2():
+    # 获取请求体参数
+    data = request.get_json()
+    msg = data["message"]
+    setup = data["setup"]
+    url = 'http://13.114.207.202:5000/api/gpt'
+    headers = {'Content-Type': 'application/json'}
+    data = {'message': msg,
+            'setup': setup
+            }
+    loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(loop)
+    reply = loop.run_until_complete(send_async_http_request(url, headers=headers, data=json.dumps(data)))
+    
     return make_succ_response(reply)
