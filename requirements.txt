@@ -10,4 +10,4 @@ SQLAlchemy==1.4.29
 Werkzeug==2.0.2
 aiohttp==3.8.1
 asyncio==3.4.3
-celery==5.2.2
+celery
