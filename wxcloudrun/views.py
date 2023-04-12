@@ -26,3 +26,25 @@ def gpt():
         print('Error:', response.status_code)
  
     return make_succ_response(reply)
+
+@app.route('/api/gpt2', methods=['POST'])
+def gpt2():
+    data = request.get_json()
+    msg = data["message"]
+    setup = data["setup"]
+    url = 'http://13.114.207.202:5000/api/gpt2'
+    headers = {'Content-Type': 'application/json'}
+    data = {'message': msg,
+            'setup': setup
+            }
+    response = requests.post(url, headers=headers, data=json.dumps(data))
+    if response.status_code == 200:
+        response_dict = json.loads(response.text)
+        task_id = response_dict['task_id']
+    else:
+        print('Error:', response.status_code)
+        
+    return make_succ_response(task_id)
+    
+    
+    
