@@ -11,3 +11,4 @@ Werkzeug==2.0.2
 aiohttp==3.8.1
 asyncio==3.4.3
 celery
+redis
