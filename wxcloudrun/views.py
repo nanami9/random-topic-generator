@@ -10,7 +10,6 @@ import aiohttp
 import asyncio
 from celery import Celery
 
-app = Flask(__name__)
 celery = Celery(app.name, broker='redis://localhost:6379/0')
 
 
