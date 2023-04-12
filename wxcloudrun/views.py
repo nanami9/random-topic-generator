@@ -9,6 +9,8 @@ import json
 import aiohttp
 import asyncio
 
+cache = ""
+
 @app.route('/')
 def index():
     """
@@ -111,5 +113,13 @@ def gpt2():
     loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     reply = loop.run_until_complete(send_async_http_request(url, headers=headers, data=json.dumps(data)))
+    cache = reply
     
     return make_succ_response(reply)
+
+@app.route('/api/cache', methods=['POST'])
+def cache():
+    if != "":
+        return make_succ_response(cache)
+    else:
+        return make_succ_response("none")
