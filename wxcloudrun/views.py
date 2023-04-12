@@ -9,13 +9,14 @@ import json
 import aiohttp
 import asyncio
 from celery import Celery
+import subprocess
 
+redis_server = subprocess.Popen(['redis-server'])
 
 app.config['CELERY_BROKER_URL'] = 'redis://localhost:6379/0'
 app.config['CELERY_RESULT_BACKEND'] = 'redis://localhost:6379/0'
 celery = Celery(app.name, broker=app.config['CELERY_BROKER_URL'])
 celery.conf.update(app.config)
-
 
 
 @app.route('/')
