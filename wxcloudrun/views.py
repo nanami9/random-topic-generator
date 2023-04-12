@@ -8,8 +8,12 @@ import requests
 import json
 import aiohttp
 import asyncio
+from celery import Celery
 
-cache = ""
+app = Flask(__name__)
+celery = Celery(app.name, broker='redis://localhost:6379/0')
+
+
 
 @app.route('/')
 def index():
@@ -90,37 +94,39 @@ def gpt():
  
     return make_succ_response(reply)
 
-async def send_async_http_request(url, headers, data):
-    async with aiohttp.ClientSession() as session:
-        async with session.post(url, headers=headers, data=data) as response:
-            if response.status == 200:
-                return await response.text()
-            else:
-                print('Error:', response.status)
-                return None
-           
+@celery.task
+def gpt2_task(msg, setup):
+    url = 'http://13.114.207.202:5000/api/gpt'
+    headers = {'Content-Type': 'application/json'}
+    data = {'message': msg,
+            'setup': setup
+            }
+    response = requests.post(url, headers=headers, json=data, timeout=60)
+    return response.text
+
 @app.route('/api/gpt2', methods=['POST'])
 def gpt2():
     # 获取请求体参数
     data = request.get_json()
     msg = data["message"]
     setup = data["setup"]
-    url = 'http://13.114.207.202:5000/api/gpt'
-    headers = {'Content-Type': 'application/json'}
-    data = {'message': msg,
-            'setup': setup
-            }
-    loop = asyncio.new_event_loop()
-    asyncio.set_event_loop(loop)
-    reply = loop.run_until_complete(send_async_http_request(url, headers=headers, data=json.dumps(data)))
-    cache = reply
     
-    return make_succ_response(reply)
+    # 在 Celery 中执行任务
+    task = gpt2_task.delay(msg, setup)
+    
+    # 返回任务 ID 给客户端
+    return make_succ_response({'task_id': task.id})
 
-# 返回cache结果
-@app.route('/api/cache', methods=['POST'])
-def cache_api():
-    if cache != "":
-        return make_succ_response(cache)
+@app.route('/api/gpt2/status', methods=['GET'])
+def gpt2_status():
+    # 获取任务 ID 参数
+    task_id = request.args.get('task_id')
+    
+    # 查询任务状态并返回结果
+    task = gpt2_task.AsyncResult(task_id)
+    if task.state == 'SUCCESS':
+        return make_succ_response(task.result)
+    elif task.state == 'FAILURE':
+        return make_error_response('Task failed')
     else:
-        return make_succ_response("none")
+        return make_succ_response({'status': task.state})
