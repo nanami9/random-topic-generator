@@ -119,7 +119,7 @@ def gpt2():
 
 @app.route('/api/cache', methods=['POST'])
 def cache():
-    if != "":
+    if cache != "":
         return make_succ_response(cache)
     else:
         return make_succ_response("none")
