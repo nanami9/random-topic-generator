@@ -52,9 +52,11 @@ def gpt2_status():
     # 获取发送来的id
     data = request.get_json()
     task_id = data["task_id"]
+    print("taskid:"+task_id)
     api_endpoint = 'http://13.114.207.202:5000/api/gpt2/status'
     # 构造请求URL
     url = f'{api_endpoint}?task_id={task_id}'
+    print("url"+url)
     # 发送GET请求并获取响应
     response = requests.get(url)
     # 解析JSON响应
