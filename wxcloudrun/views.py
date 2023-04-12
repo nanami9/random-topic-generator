@@ -46,6 +46,7 @@ def gpt2():
         
     return make_succ_response(task_id)
 
+
 @app.route('/api/gpt2/status', methods=['POST'])
 def gpt2_status():
     # 获取发送来的id
